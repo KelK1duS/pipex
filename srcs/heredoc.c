@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bedarenn <bedarenn@student.42angouleme.fr  +#+  +:+       +#+        */
+/*   By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/28 16:54:20 by bedarenn          #+#    #+#             */
-/*   Updated: 2024/02/11 13:29:25 by bedarenn         ###   ########.fr       */
+/*   Updated: 2024/02/14 15:43:34 by bedarenn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,33 +19,37 @@
 char	*heredoc(char *end)
 {
 	int		fd;
-	char	*str;
-	char	*endl;
-	size_t	end_len;
+	char	*file;
 
-	str = NULL;
-	fd = open(HEREDOC, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	file = get_heredoc_name();
+	if (!file)
+		return (NULL);
+	fd = create_file(file);
 	if (fd < 0)
 		return (NULL);
-	endl = wati_strjoin(end, "\n");
-	end_len = wati_strlen(endl);
-	wati_putstr_fd("pipe heredoc> ", 1);
-	while (!str)
-		str = get_next_line(0);
-	while (wati_strncmp(str, endl, end_len))
-	{
-		wati_putstr_fd(str, fd);
-		free(str);
-		wati_putstr_fd("pipe heredoc> ", 1);
-		while (!str)
-			str = get_next_line(0);
-	}
-	if (str)
-		free(str);
-	else
-		wati_putchar_fd('\n', 1);
-	free(endl);
+	end = join_endl(end, fd, file);
+	if (!end)
+		return (NULL);
+	wati_putstr_fd(HEREDOC_PIP, 1);
+	write_file(end, fd);
+	free(end);
 	delete_buffer(0);
 	close(fd);
-	return (wati_strdup(HEREDOC));
+	return (file);
+}
+
+char	*get_heredoc_name(void)
+{
+	int				fd;
+	char			*str;
+
+	fd = open("/dev/random", O_RDONLY);
+	if (fd < 0)
+		return (wati_strdup(HEREDOC));
+	str = init_filename(&fd);
+	if (!str)
+		return (wati_strdup(HEREDOC));
+	read_filename(&str, &fd);
+	close(fd);
+	return (str);
 }

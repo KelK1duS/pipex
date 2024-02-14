@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: bedarenn <bedarenn@student.42angouleme.fr  +#+  +:+       +#+         #
+#    By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/25 23:28:11 by bedarenn          #+#    #+#              #
-#    Updated: 2024/02/11 13:38:56 by bedarenn         ###   ########.fr        #
+#    Updated: 2024/02/14 16:14:52 by bedarenn         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,12 +34,13 @@ SRCS = \
 	manage_pid.c \
 	manage_fd.c \
 	heredoc.c \
+	heredoc_tools.c \
 	wati_fork.c \
 	main.c
 
 OBJS = $(addprefix $(DIR_OBJS), $(SRCS:%.c=%.o))
 
-CFLAGS = -Wall -Wextra -Werror #-g
+CFLAGS = -Wall -Wextra #-Werror #-g
 IFLAGS = -I$(DIR_INCL)
 LFLAGS = -L$(DIR_LIBS) -lwati
 

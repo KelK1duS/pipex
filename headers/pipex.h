@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bedarenn <bedarenn@student.42angouleme.fr  +#+  +:+       +#+        */
+/*   By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 18:46:41 by bedarenn          #+#    #+#             */
-/*   Updated: 2024/02/11 13:43:41 by bedarenn         ###   ########.fr       */
+/*   Updated: 2024/02/14 15:44:05 by bedarenn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <sys/types.h>
 
 # define HEREDOC "here_doc"
+# define HEREDOC_PIP "pipe heredoc> "
 
 typedef struct s_file
 {
@@ -37,21 +38,42 @@ typedef struct s_cmd
 	char	*path;
 }	t_cmd;
 
+typedef struct s_exec
+{
+	char	**path;
+	char	**envp;
+}	t_exec;
+
+int		wati_error(void);
+
+t_cmd	get_list_cmd(t_list *list);
+t_exec	build_cmds(char **envp);
+void	print_cmd(t_cmd *cmd);
+
+t_cmd	*get_cmd(char *str, char **path);
+int		test_path(t_cmd *cmd);
+
+char	*heredoc(char *end);
+char	*get_heredoc_name(void);
+
+char	*init_filename(int *fd);
+char	*read_filename(char **str, int *fd);
+int		create_file(char *str);
+char	*join_endl(char *end, int fd, char *str);
+void	write_file(char *end, int fd);
+
 void	free_cmd(void *cmd);
 char	*get_var(char **envp, char *lf);
-t_cmd	*get_list_cmd(t_list *list);
-t_list	*get_cmds(char **argv, char	**path);
 char	*get_path(char **path, char **cmd);
-int		test_path(t_cmd *cmd);
-void	wati_pip(t_fd fd, t_list *cmds, char **envp);
-char	*heredoc(char *end);
 t_list	*add_pid(t_list **list, pid_t pid);
 void	free_pid(void *ptr);
+
+void	wati_pip(t_fd fd, t_exec exec, char **argv);
 
 void	close_secure(int *fd);
 void	close_pip(int pip[2]);
 void	close_all(t_fd	*fd);
-void	close_classic(t_fd *fd, t_list **list);
+void	close_classic(t_fd *fd);
 t_fd	open_fd(t_file file, int flags);
 
 #endif

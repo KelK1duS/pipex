@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_var.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bedarenn <bedarenn@student.42angouleme.fr  +#+  +:+       +#+        */
+/*   By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 18:54:13 by bedarenn          #+#    #+#             */
-/*   Updated: 2024/01/29 20:39:25 by bedarenn         ###   ########.fr       */
+/*   Updated: 2024/02/13 18:54:25 by bedarenn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,8 @@ char	*get_path(char **path, char **cmd)
 	char	*str0;
 	char	*str1;
 
+	if (!cmd || !*cmd || !**cmd)
+		return (NULL);
 	while (*path)
 	{
 		str0 = wati_strjoin(*path, "/");
