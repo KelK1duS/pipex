@@ -6,7 +6,7 @@
 /*   By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/17 15:47:25 by bedarenn          #+#    #+#             */
-/*   Updated: 2024/02/13 18:54:58 by bedarenn         ###   ########.fr       */
+/*   Updated: 2024/02/19 13:46:41 by bedarenn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,21 @@
 #include <libwati.h>
 #include <stdio.h>
 
+static void	close_std(void)
+{
+	close(STDERR_FILENO);
+	close(STDOUT_FILENO);
+	close(STDIN_FILENO);
+}
+
+static void	dup_std(int in, int out)
+{
+	if (in > 2)
+		dup2(in, STDIN_FILENO);
+	if (out > 2)
+		dup2(out, STDOUT_FILENO);
+}
+
 static void	wati_fork(t_fd *fd, t_exec exec, char *str, t_list **pids)
 {
 	t_cmd	*cmd;
@@ -27,8 +42,7 @@ static void	wati_fork(t_fd *fd, t_exec exec, char *str, t_list **pids)
 	pid = fork();
 	if (!pid)
 	{
-		dup2(fd->in, STDIN_FILENO);
-		dup2(fd->pip[1], STDOUT_FILENO);
+		dup_std(fd->in, fd->pip[1]);
 		close_all(fd);
 		cmd = get_cmd(str, exec.path);
 		if (cmd && cmd->strs && *cmd->strs)
@@ -42,6 +56,7 @@ static void	wati_fork(t_fd *fd, t_exec exec, char *str, t_list **pids)
 			free_cmd(cmd);
 		wati_lstclear(pids, free);
 		wati_free_tab(exec.path);
+		close_std();
 		exit(EXIT_FAILURE);
 	}
 	add_pid(pids, pid);
@@ -55,8 +70,7 @@ static void	wati_fork_o(t_fd *fd, t_exec exec, char *str, t_list **pids)
 	pid = fork();
 	if (!pid)
 	{
-		dup2(fd->in, STDIN_FILENO);
-		dup2(fd->out, STDOUT_FILENO);
+		dup_std(fd->in, fd->out);
 		close_secure(&fd->in);
 		close_secure(&fd->out);
 		cmd = get_cmd(str, exec.path);
@@ -71,6 +85,7 @@ static void	wati_fork_o(t_fd *fd, t_exec exec, char *str, t_list **pids)
 			free_cmd(cmd);
 		wati_lstclear(pids, free);
 		wati_free_tab(exec.path);
+		close_std();
 		exit(EXIT_FAILURE);
 	}
 	add_pid(pids, pid);
@@ -83,7 +98,8 @@ void	wati_pip(t_fd fd, t_exec exec, char **argv)
 	pids = NULL;
 	if (pipe(fd.pip))
 		return ;
-	wati_fork(&fd, exec, *argv, &pids);
+	if (fd.in > 2)
+		wati_fork(&fd, exec, *argv, &pids);
 	argv++;
 	close_classic(&fd);
 	while (argv[2])

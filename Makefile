@@ -6,7 +6,7 @@
 #    By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/25 23:28:11 by bedarenn          #+#    #+#              #
-#    Updated: 2024/02/14 16:14:52 by bedarenn         ###   ########.fr        #
+#    Updated: 2024/02/15 18:37:31 by bedarenn         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -40,7 +40,7 @@ SRCS = \
 
 OBJS = $(addprefix $(DIR_OBJS), $(SRCS:%.c=%.o))
 
-CFLAGS = -Wall -Wextra #-Werror #-g
+CFLAGS = -Wall -Wextra -Werror -g
 IFLAGS = -I$(DIR_INCL)
 LFLAGS = -L$(DIR_LIBS) -lwati
 
@@ -65,8 +65,8 @@ fclean: clean
 
 libwati:
 	make -C $(DIR_WATI) -j
-	cp $(DIR_WATI)libwati.h $(DIR_INCL)
-	cp $(DIR_WATI)libwati.a $(DIR_LIBS)
+	@cp $(DIR_WATI)libwati.h $(DIR_INCL)
+	@cp $(DIR_WATI)libwati.a $(DIR_LIBS)
 
 
 re: fclean all

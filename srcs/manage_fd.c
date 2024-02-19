@@ -6,7 +6,7 @@
 /*   By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/10 12:59:01 by bedarenn          #+#    #+#             */
-/*   Updated: 2024/02/14 16:14:19 by bedarenn         ###   ########.fr       */
+/*   Updated: 2024/02/19 13:43:13 by bedarenn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,17 +48,14 @@ t_fd	open_fd(t_file file, int flags)
 	t_fd	fd;
 
 	fd.in = open(file.in, O_RDONLY);
-	if (fd.in < 0)
-	{
-		perror(file.in);
-		return (fd);
-	}
 	fd.out = open(file.out, flags, 0664);
+	if (fd.in < 0)
+		perror(file.in);
 	if (fd.out < 0)
 	{
 		perror(file.out);
-		close(fd.in);
-		fd.in = -1;
+		close_secure(&fd.in);
+		close_secure(&fd.out);
 	}
 	return (fd);
 }

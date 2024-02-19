@@ -6,7 +6,7 @@
 /*   By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 18:46:41 by bedarenn          #+#    #+#             */
-/*   Updated: 2024/02/14 15:44:05 by bedarenn         ###   ########.fr       */
+/*   Updated: 2024/02/15 19:36:35 by bedarenn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ char	*init_filename(int *fd);
 char	*read_filename(char **str, int *fd);
 int		create_file(char *str);
 char	*join_endl(char *end, int fd, char *str);
-void	write_file(char *end, int fd);
+char	*join_free(char *s1, char *s2);
 
 void	free_cmd(void *cmd);
 char	*get_var(char **envp, char *lf);

@@ -6,7 +6,7 @@
 /*   By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/14 15:20:39 by bedarenn          #+#    #+#             */
-/*   Updated: 2024/02/14 15:46:20 by bedarenn         ###   ########.fr       */
+/*   Updated: 2024/02/15 19:36:17 by bedarenn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,11 @@ char	*read_filename(char **str, int *fd)
 			*str = wati_strdup(HEREDOC);
 			return (*str);
 		}
-		*str1 = c % 93 + 33;
-		str1++;
+		if (wati_isalnum(c))
+		{
+			*str1 = c;
+			str1++;
+		}
 	}
 	return (*str);
 }
@@ -76,25 +79,12 @@ char	*join_endl(char *end, int fd, char *str)
 	return (end);
 }
 
-void	write_file(char *end, int fd)
+char	*join_free(char *s1, char *s2)
 {
-	size_t	end_len;
 	char	*str;
 
-	end_len = wati_strlen(end);
-	str = get_next_line(0);
-	if (!str)
-		str = wati_strdup("");
-	while (wati_strncmp(str, end, end_len))
-	{
-		wati_putstr_fd(str, fd);
-		if (wati_strchr(str, '\n'))
-			wati_putstr_fd(HEREDOC_PIP, 1);
-		free(str);
-		str = get_next_line(0);
-		if (!str)
-			str = wati_strdup("");
-	}
-	if (str)
-		free(str);
+	str = wati_strjoin(s1, s2);
+	free(s1);
+	free(s2);
+	return (str);
 }

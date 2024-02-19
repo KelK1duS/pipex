@@ -6,7 +6,7 @@
 /*   By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 18:50:39 by bedarenn          #+#    #+#             */
-/*   Updated: 2024/02/14 15:14:31 by bedarenn         ###   ########.fr       */
+/*   Updated: 2024/02/19 13:42:23 by bedarenn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ int	main_heredoc(int argc, char **argv, char **envp)
 	}
 	else
 	{
+		unlink(file.in);
+		free(file.in);
 		wati_free_tab(exec.path);
 		return (1);
 	}
@@ -63,7 +65,7 @@ int	main_file(int argc, char **argv, char **envp)
 		return (wati_error());
 	file.in = argv[1];
 	fd = open_fd(file, O_WRONLY | O_CREAT | O_TRUNC);
-	if (fd.in >= 0 && fd.out >= 0)
+	if (fd.out >= 0)
 		wati_pip(fd, exec, argv + 2);
 	else
 	{
