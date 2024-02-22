@@ -6,7 +6,7 @@
 #    By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/25 23:28:11 by bedarenn          #+#    #+#              #
-#    Updated: 2024/02/15 18:37:31 by bedarenn         ###   ########.fr        #
+#    Updated: 2024/02/22 18:27:22 by bedarenn         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,27 +26,38 @@ GNL = \
 	read_file.c \
 	get_file.c
 
-SRCS = \
+SRC = \
 	$(addprefix $(DIR_GNL), $(GNL)) \
 	get_var.c \
 	get_cmds.c \
 	manage_cmd.c \
 	manage_pid.c \
 	manage_fd.c \
-	heredoc.c \
-	heredoc_tools.c \
-	wati_fork.c \
+	wati_fork.c
+
+SRCS = \
+	$(SRC) \
 	main.c
 
-OBJS = $(addprefix $(DIR_OBJS), $(SRCS:%.c=%.o))
+SRCS_BONUS = \
+	$(SRC) \
+	heredoc.c \
+	heredoc_tools.c \
+	main_bonus.c
 
-CFLAGS = -Wall -Wextra -Werror -g
+OBJS = $(addprefix $(DIR_OBJS), $(SRCS:%.c=%.o))
+OBJS_BONUS = $(addprefix $(DIR_OBJS), $(SRCS_BONUS:%.c=%.o))
+
+CFLAGS = -Wall -Wextra -Werror
 IFLAGS = -I$(DIR_INCL)
 LFLAGS = -L$(DIR_LIBS) -lwati
 
 NAME = pipex
 
 all: libwati $(NAME)
+
+bonus: $(OBJS_BONUS)
+	$(CC) $^ $(LFLAGS) -o $(NAME)
 
 $(NAME): $(OBJS)
 	$(CC) $^ $(LFLAGS) -o $@
@@ -57,7 +68,7 @@ $(DIR_OBJS)%.o: $(DIR_SRCS)%.c
 
 clean:
 	make -C $(DIR_WATI) clean
-	rm -f $(OBJS)
+	rm -rf $(DIR_OBJS)
 
 fclean: clean
 	make -C $(DIR_WATI) fclean
