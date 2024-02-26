@@ -5,116 +5,89 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/17 15:47:25 by bedarenn          #+#    #+#             */
-/*   Updated: 2024/02/19 13:46:41 by bedarenn         ###   ########.fr       */
+/*   Created: 2024/02/23 13:58:36 by bedarenn          #+#    #+#             */
+/*   Updated: 2024/02/26 14:20:31 by bedarenn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <fcntl.h>
 #include <pipex.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <unistd.h>
-#include <libwati.h>
-#include <stdio.h>
 
-static void	close_std(void)
-{
-	close(STDERR_FILENO);
-	close(STDOUT_FILENO);
-	close(STDIN_FILENO);
-}
+static void	wati_execve(t_cmd	*cmd, char **envp);
+static void	free_fork(t_list **pids, char **path);
 
-static void	dup_std(int in, int out)
-{
-	if (in > 2)
-		dup2(in, STDIN_FILENO);
-	if (out > 2)
-		dup2(out, STDOUT_FILENO);
-}
-
-static void	wati_fork(t_fd *fd, t_exec exec, char *str, t_list **pids)
+int	wati_fork(t_fd *fd, t_exec exec, char *str, t_list **pids)
 {
 	t_cmd	*cmd;
 	pid_t	pid;
 
 	pid = fork();
+	if (pid == -1)
+		return (-1);
 	if (!pid)
 	{
-		dup_std(fd->in, fd->pip[1]);
+		if (dup_std(fd->in, fd->pip[1]) == -1)
+		{
+			close_all(fd);
+			free_fork(pids, exec.path);
+		}
+		dup2(fd->in, STDIN_FILENO);
+		dup2(fd->pip[1], STDOUT_FILENO);
 		close_all(fd);
 		cmd = get_cmd(str, exec.path);
-		if (cmd && cmd->strs && *cmd->strs)
-		{
-			if (cmd->path)
-				execve(cmd->path, cmd->strs, exec.envp);
-			else
-				execve(cmd->strs[0], cmd->strs, exec.envp);
-		}
+		wati_execve(cmd, exec.envp);
 		if (cmd)
 			free_cmd(cmd);
-		wati_lstclear(pids, free);
-		wati_free_tab(exec.path);
 		close_std();
-		exit(EXIT_FAILURE);
+		free_fork(pids, exec.path);
 	}
 	add_pid(pids, pid);
+	return (pid);
 }
 
-static void	wati_fork_o(t_fd *fd, t_exec exec, char *str, t_list **pids)
+int	wati_fork_o(t_fd *fd, t_exec exec, char *str, t_list **pids)
 {
 	t_cmd	*cmd;
 	pid_t	pid;
 
 	pid = fork();
+	if (pid == -1)
+		return (-1);
 	if (!pid)
 	{
-		dup_std(fd->in, fd->out);
+		if (dup_std(fd->in, fd->out) == -1)
+		{
+			close_all(fd);
+			free_fork(pids, exec.path);
+		}
 		close_secure(&fd->in);
 		close_secure(&fd->out);
 		cmd = get_cmd(str, exec.path);
-		if (cmd && cmd->strs && *cmd->strs)
-		{
-			if (cmd->path)
-				execve(cmd->path, cmd->strs, exec.envp);
-			else
-				execve(cmd->strs[0], cmd->strs, exec.envp);
-		}
+		wati_execve(cmd, exec.envp);
 		if (cmd)
 			free_cmd(cmd);
-		wati_lstclear(pids, free);
-		wati_free_tab(exec.path);
 		close_std();
-		exit(EXIT_FAILURE);
+		free_fork(pids, exec.path);
 	}
 	add_pid(pids, pid);
+	return (pid);
 }
 
-void	wati_pip(t_fd fd, t_exec exec, char **argv)
+static void	wati_execve(t_cmd	*cmd, char **envp)
 {
-	t_list	*pids;
-
-	pids = NULL;
-	if (pipe(fd.pip))
-		return ;
-	if (fd.in > 2)
-		wati_fork(&fd, exec, *argv, &pids);
-	argv++;
-	close_classic(&fd);
-	while (argv[2])
+	if (cmd && cmd->strs && *cmd->strs)
 	{
-		if (pipe(fd.pip))
-		{
-			wati_lstclear(&pids, free_pid);
-			return ;
-		}
-		wati_fork(&fd, exec, *argv, &pids);
-		argv++;
-		close_classic(&fd);
+		if (cmd->path)
+			execve(cmd->path, cmd->strs, envp);
+		else
+			execve(cmd->strs[0], cmd->strs, envp);
 	}
-	wati_fork_o(&fd, exec, *argv, &pids);
-	close_secure(&fd.in);
-	close_secure(&fd.out);
-	wati_lstclear(&pids, free_pid);
+}
+
+static void	free_fork(t_list **pids, char **path)
+{
+	wati_lstclear(pids, free);
+	wati_free_tab(path);
+	exit(EXIT_FAILURE);
 }

@@ -6,7 +6,7 @@
 /*   By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 18:50:39 by bedarenn          #+#    #+#             */
-/*   Updated: 2024/02/22 18:18:10 by bedarenn         ###   ########.fr       */
+/*   Updated: 2024/02/26 13:37:28 by bedarenn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	main_file(int argc, char **argv, char **envp)
 	t_exec	exec;
 
 	if (argc < 5)
-		return (1);
+		return (wati_error());
 	file.out = argv[argc - 1];
 	exec = build_cmds(envp);
 	if (!exec.path)

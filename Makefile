@@ -6,7 +6,7 @@
 #    By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/25 23:28:11 by bedarenn          #+#    #+#              #
-#    Updated: 2024/02/22 18:27:22 by bedarenn         ###   ########.fr        #
+#    Updated: 2024/02/23 13:59:00 by bedarenn         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,9 @@ SRC = \
 	get_cmds.c \
 	manage_cmd.c \
 	manage_pid.c \
-	manage_fd.c \
+	manage_close.c \
+	manage_open.c \
+	wati_pip.c \
 	wati_fork.c
 
 SRCS = \

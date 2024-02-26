@@ -6,7 +6,7 @@
 /*   By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 18:46:41 by bedarenn          #+#    #+#             */
-/*   Updated: 2024/02/15 19:36:35 by bedarenn         ###   ########.fr       */
+/*   Updated: 2024/02/23 14:00:22 by bedarenn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,17 @@ char	*get_path(char **path, char **cmd);
 t_list	*add_pid(t_list **list, pid_t pid);
 void	free_pid(void *ptr);
 
+int		wati_fork(t_fd *fd, t_exec exec, char *str, t_list **pids);
+int		wati_fork_o(t_fd *fd, t_exec exec, char *str, t_list **pids);
 void	wati_pip(t_fd fd, t_exec exec, char **argv);
 
 void	close_secure(int *fd);
 void	close_pip(int pip[2]);
 void	close_all(t_fd	*fd);
 void	close_classic(t_fd *fd);
+void	close_std(void);
+
 t_fd	open_fd(t_file file, int flags);
+int		dup_std(int in, int out);
 
 #endif

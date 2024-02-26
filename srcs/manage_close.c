@@ -1,19 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   manage_fd.c                                        :+:      :+:    :+:   */
+/*   manage_close.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/10 12:59:01 by bedarenn          #+#    #+#             */
-/*   Updated: 2024/02/19 13:43:13 by bedarenn         ###   ########.fr       */
+/*   Updated: 2024/02/23 14:36:20 by bedarenn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <pipex.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <stdio.h>
 
 void	close_secure(int *fd)
 {
@@ -43,19 +41,8 @@ void	close_classic(t_fd *fd)
 	fd->pip[0] = -1;
 }
 
-t_fd	open_fd(t_file file, int flags)
+void	close_std(void)
 {
-	t_fd	fd;
-
-	fd.in = open(file.in, O_RDONLY);
-	fd.out = open(file.out, flags, 0664);
-	if (fd.in < 0)
-		perror(file.in);
-	if (fd.out < 0)
-	{
-		perror(file.out);
-		close_secure(&fd.in);
-		close_secure(&fd.out);
-	}
-	return (fd);
+	close(STDOUT_FILENO);
+	close(STDIN_FILENO);
 }

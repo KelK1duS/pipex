@@ -6,7 +6,7 @@
 /*   By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 18:54:13 by bedarenn          #+#    #+#             */
-/*   Updated: 2024/02/13 18:54:25 by bedarenn         ###   ########.fr       */
+/*   Updated: 2024/02/23 14:08:37 by bedarenn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,16 +40,8 @@ char	*get_path(char **path, char **cmd)
 		str0 = wati_strjoin(*path, "/");
 		str1 = wati_strjoin(str0, *cmd);
 		free(str0);
-		if (!access(str1, F_OK))
-		{
-			if (access(str1, X_OK))
-			{
-				free(str1);
-				wati_printf("CAN'T EXEC : %s\n", str1);
-				return (NULL);
-			}
+		if (!access(str1, X_OK))
 			return (str1);
-		}
 		free(str1);
 		path++;
 	}
