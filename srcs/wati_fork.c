@@ -6,7 +6,7 @@
 /*   By: bedarenn <bedarenn@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/23 13:58:36 by bedarenn          #+#    #+#             */
-/*   Updated: 2024/02/26 14:20:31 by bedarenn         ###   ########.fr       */
+/*   Updated: 2024/02/29 16:58:05 by bedarenn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,6 @@ int	wati_fork(t_fd *fd, t_exec exec, char *str, t_list **pids)
 			close_all(fd);
 			free_fork(pids, exec.path);
 		}
-		dup2(fd->in, STDIN_FILENO);
-		dup2(fd->pip[1], STDOUT_FILENO);
 		close_all(fd);
 		cmd = get_cmd(str, exec.path);
 		wati_execve(cmd, exec.envp);
